@@ -9,14 +9,15 @@ class ServiceBase(metaclass=ABCMeta):
         self._db_id = 0
 
     def get(self, key):
-        return self._db[key]
+        return self._db[key] if key in self._db else None
 
     @abstractmethod
     def save(self, key):
         pass
 
     def fetch(self, key):
-        return self.get(key) if key in self._db else self.save(key)
+        value = self.get(key)
+        return value if value is not None else self.save(key)
 
 
 class PlatformService(ServiceBase):
@@ -26,6 +27,7 @@ class PlatformService(ServiceBase):
 
     def save(self, key):
         self._db_id += 1
+        print(self._db_id)
         self._db[key] = self._db_id
         return self._db_id
 
@@ -49,20 +51,25 @@ class AppService(ServiceBase):
         self._db_id = 0
         self._app_db = {}
 
-    def save(self, key, plat_name, dev_bio):
+    def save(self, key, plat_id, dev_bio):
         self._db_id += 1
         self._db[key] = self._db_id
-        self._app_db[key] = (plat_name, dev_bio)
+        self._app_db[key] = (plat_id, dev_bio)
         return self._db_id
 
-    def fetch(self, key, plat_name, dev_bio):
-        return self.get(key) if key in self._db else self.save(key, plat_name, dev_bio)
+    def fetch(self, key, plat_id, dev_bio):
+        value = self.get(key)
+        return value if value is not None else self.save(key, plat_id, dev_bio)
 
     def get_platform(self, key):
         return self._app_db[key][0]
 
     def get_developer_bio(self, key):
         return self._app_db[key][1]
+
+    @property
+    def get_all(self):
+        return self._db.items()
 
 
 p_service = PlatformService()

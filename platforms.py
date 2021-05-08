@@ -7,13 +7,13 @@ platforms_app = Flask('platforms_app')
 
 def start_platforms_app():
     print("starting platforms_app")
-    platforms_app.run(port=8081)
+    platforms_app.run(port=8082)
 
 
 @platforms_app.route('/api/platforms/<platformName>', methods=['GET'])
 def plat_name(platformName):
     p_id = p_service.get(platformName)
-    if p_id == 0:
+    if p_id is None:
         abort(404)
     data = {'platformName': platformName, 'platformId': p_id}
     return jsonify(data)
