@@ -1,8 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import ABCMeta, abstractmethod
 from collections import defaultdict
 import requests
 
-class ServiceBase(object):
+class ServiceBase(metaclass=ABCMeta):
     def __init__(self, db):
         self._db = db
         self._db_id = 0
