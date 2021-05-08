@@ -2,14 +2,15 @@ from abc import ABCMeta, abstractmethod
 from collections import defaultdict
 import requests
 
+
 class ServiceBase(metaclass=ABCMeta):
     def __init__(self, db):
         self._db = db
         self._db_id = 0
-    
+
     def get(self, key):
         return self._db[key]
-        
+
     @abstractmethod
     def save(self, key):
         pass
@@ -17,16 +18,18 @@ class ServiceBase(metaclass=ABCMeta):
     def fetch(self, key):
         return self.get(key) if key in self._db else self.save(key)
 
+
 class PlatformService(ServiceBase):
     def __init__(self):
         super().__init__(defaultdict(int))
         self._db_id = 0
 
     def save(self, key):
-        self._db_id+=1
+        self._db_id += 1
         self._db[key] = self._db_id
         return self._db_id
-        
+
+
 class DeveloperService(ServiceBase):
     def __init__(self):
         super().__init__(defaultdict(str))
@@ -39,6 +42,7 @@ class DeveloperService(ServiceBase):
         self._db[key] = bio
         return bio
 
+
 class AppService(ServiceBase):
     def __init__(self):
         super().__init__(defaultdict(int))
@@ -46,7 +50,7 @@ class AppService(ServiceBase):
         self._app_db = {}
 
     def save(self, key, plat_name, dev_bio):
-        self._db_id+=1
+        self._db_id += 1
         self._db[key] = self._db_id
         self._app_db[key] = (plat_name, dev_bio)
         return self._db_id
@@ -59,6 +63,7 @@ class AppService(ServiceBase):
 
     def get_developer_bio(self, key):
         return self._app_db[key][1]
+
 
 p_service = PlatformService()
 d_service = DeveloperService()
